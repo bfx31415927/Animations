@@ -10,11 +10,20 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandHorizontally
+import androidx.compose.animation.expandIn
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkHorizontally
+import androidx.compose.animation.shrinkOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
@@ -79,13 +88,62 @@ fun MainScreen() {
         }
 
         Spacer(modifier = Modifier.height(20.dp))
-
-        if(boxVisible) {
-            Box(modifier = Modifier
-                .size(height = 200.dp, width = 200.dp)
-                .background(Color.Blue)
+        /*
+        //Box анимирует из полностью прозрачного в полностью непрозрачный
+        // и обратно
+        AnimatedVisibility(
+            visible = boxVisible,
+            enter = fadeIn(animationSpec = tween(durationMillis = 1000)),
+            exit = fadeOut(animationSpec = tween(durationMillis = 1000))
+        )
+        {
+            Box(
+                modifier = Modifier
+                    .size(200.dp)
+                    .background(Color.Blue)
             )
         }
+        */
+
+        /*
+        //Box анимирует из точки и затем обратно в точку
+        AnimatedVisibility(
+            visible = boxVisible,
+            enter = expandIn(
+                expandFrom = Alignment.Center,
+                animationSpec = tween(durationMillis = 1000)
+            ),
+            exit = shrinkOut(
+                shrinkTowards = Alignment.Center,
+                animationSpec = tween(durationMillis = 1000)
+            )
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(200.dp)
+                    .background(Color.Blue)
+            )
+        }
+        */
+        //Box схлопывается  по горизонтали до уменьшающейся центральной вертикальной линии и обратно
+        // (для expandHorizontally / expandVertically)
+        // и соответственно схлопывается  по вертикали до верхней горизонтальной линии и обратно
+        // (для expandVertically / shrinkVertically)
+        AnimatedVisibility(
+            visible = boxVisible,
+            enter = expandHorizontally (animationSpec = tween(durationMillis = 1000)),
+//            enter = expandVertically (/*expandFrom = Alignment.CenterVertically, */animationSpec = tween(durationMillis = 1000)),
+            exit = shrinkHorizontally (animationSpec = tween(durationMillis = 1000))
+//            exit = shrinkVertically (/*shrinkTowards = Alignment.CenterVertically, */animationSpec = tween(durationMillis = 1000))
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(200.dp)
+                    .background(Color.Blue)
+            )
+        }
+
+
     }
 }
 
