@@ -21,7 +21,9 @@ import androidx.compose.animation.core.FastOutLinearInEasing
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.repeatable
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandHorizontally
 import androidx.compose.animation.expandIn
@@ -225,7 +227,7 @@ fun MainScreen() {
         }
          */
 
-//        /*
+        /*
         // FastOutSlowInEasing:     Быстрое начало(FastOut), плавное замедление(SlowIn)
         // LinearOutSlowInEasing:   Подходит для анимаций,
         //                          где важно быстро начать движение, но не резко заканчивать.
@@ -242,6 +244,25 @@ fun MainScreen() {
             enter = slideInHorizontally(animationSpec = tween(durationMillis = 5000,
                 easing = CubicBezierEasing(0f, 1f, 0.5f,1f))),
             exit =  slideOutVertically()
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(200.dp)
+                    .background(Color.Blue)
+            )
+        }
+         */
+
+//        /*
+        //Повторение анимации (в примере ниже 4 раза)
+        // При RepeatMode.Restart - тупо повторяется одно и то же
+        // При RepeatMode.Reverse - в прямом -> в обратном -> в прямом -> ...
+        AnimatedVisibility(
+            visible = boxVisible,
+            enter = fadeIn(
+                animationSpec = repeatable(4,tween(durationMillis = 2000),
+                    repeatMode = RepeatMode.Reverse)),
+            exit = fadeOut(animationSpec = tween(durationMillis = 1000))
         ) {
             Box(
                 modifier = Modifier
