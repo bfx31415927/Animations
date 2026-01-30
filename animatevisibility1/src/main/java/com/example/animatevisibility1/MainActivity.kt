@@ -1,7 +1,11 @@
 /*
-    Программа анимирует нажатие кнопок [Show] и [Hide]
-    Анимируется при нажатии кнопки ее размер и цвет.
-    Формально кнопки нажимаются, чтобы скрыть/показать Box
+    1. Программа анимирует нажатие кнопок [Show] и [Hide]
+        Анимируется при нажатии кнопки ее размер и цвет.
+        Формально кнопки нажимаются, чтобы скрыть/показать Box
+    2. Программа проверяет различные варианты анимаций,
+        чтобы скрыть/показать Box
+    3. Выяснилось, что комбинирование эффектов анимации сложнее (пока не сделал!)
+
  */
 package com.example.animatevisibility1
 
@@ -21,9 +25,17 @@ import androidx.compose.animation.expandIn
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.animation.shrinkHorizontally
 import androidx.compose.animation.shrinkOut
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.animation.slideIn
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOut
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
@@ -52,6 +64,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.example.animatevisibility1.ui.theme.AnimateVisibility1Theme
 
@@ -75,6 +88,7 @@ fun MainScreen() {
     val onClick = { newState: Boolean ->
         boxVisible = newState
     }
+
     Column(
         Modifier.padding(20.dp),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -106,7 +120,7 @@ fun MainScreen() {
         */
 
         /*
-        //Box анимирует из точки и затем обратно в точку
+        //Box анимирует из точки в центре верхней линии бокса и затем обратно в точку
         AnimatedVisibility(
             visible = boxVisible,
             enter = expandIn(
@@ -125,16 +139,33 @@ fun MainScreen() {
             )
         }
         */
-        //Box схлопывается  по горизонтали до уменьшающейся центральной вертикальной линии и обратно
+
+        /*
+        // 1. Box схлопывается  по горизонтали до уменьшающейся центральной вертикальной линии и обратно
         // (для expandHorizontally / expandVertically)
-        // и соответственно схлопывается  по вертикали до верхней горизонтальной линии и обратно
+        // 2. и соответственно схлопывается  по вертикали до верхней горизонтальной линии и обратно
         // (для expandVertically / shrinkVertically)
+//        AnimatedVisibility(
+//            visible = boxVisible,
+//            enter = expandHorizontally (animationSpec = tween(durationMillis = 1000)),
+////            enter = expandVertically (/*expandFrom = Alignment.CenterVertically, */animationSpec = tween(durationMillis = 1000)),
+//            exit = shrinkHorizontally (animationSpec = tween(durationMillis = 1000))
+////            exit = shrinkVertically (/*shrinkTowards = Alignment.CenterVertically, */animationSpec = tween(durationMillis = 1000))
+//        ) {
+//            Box(
+//                modifier = Modifier
+//                    .size(200.dp)
+//                    .background(Color.Blue)
+//            )
+//        }
+         */
+
+        /*
+        //Box анимирует из точки центра бокса и затем обратно в эту точку
         AnimatedVisibility(
             visible = boxVisible,
-            enter = expandHorizontally (animationSpec = tween(durationMillis = 1000)),
-//            enter = expandVertically (/*expandFrom = Alignment.CenterVertically, */animationSpec = tween(durationMillis = 1000)),
-            exit = shrinkHorizontally (animationSpec = tween(durationMillis = 1000))
-//            exit = shrinkVertically (/*shrinkTowards = Alignment.CenterVertically, */animationSpec = tween(durationMillis = 1000))
+            enter = scaleIn (animationSpec = tween(durationMillis = 1000)),
+            exit = scaleOut (animationSpec = tween(durationMillis = 1000))
         ) {
             Box(
                 modifier = Modifier
@@ -142,8 +173,54 @@ fun MainScreen() {
                     .background(Color.Blue)
             )
         }
+         */
 
+        /*
+        // 1. Для slideInHorizontally/slideOutHorizontally Box появляется полностью
+        // и скользит вдоль гориз. оси к нужному месту,
+        // а затем все наоборот
+        // initialOffsetX: если <0, то скользит слева на указ. значение (в Dp),
+        //                 если >0, то скользит справа
+        // targetOffsetX: аналогично
+        // 2. Для slideInVertically/slideOutVertically все аналогично, только по верт. оси
+        AnimatedVisibility(
+            visible = boxVisible,
+//            enter = slideInHorizontally (initialOffsetX = {-500}, animationSpec = tween(durationMillis = 1000)),
+//            exit = slideOutHorizontally (targetOffsetX = {+500}, animationSpec = tween(durationMillis = 1000))
+            enter = slideInVertically (initialOffsetY = {-500}, animationSpec = tween(durationMillis = 1000)),
+            exit = slideOutVertically (targetOffsetY = {+500}, animationSpec = tween(durationMillis = 1000))
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(200.dp)
+                    .background(Color.Blue)
+            )
+        }
+         */
 
+        /*
+        // При slideIn Box появляется и скользит под настраиваемым углом
+        // (в примере ниже - из левого нижнего угла с расстояния 500dp)
+        // При slideOut Box скользит под настраиваемым углом и исчезает
+        // (в примере ниже - к правому нижнему углу на расстояние 500dp)
+        AnimatedVisibility(
+            visible = boxVisible,
+            enter = slideIn(
+                initialOffset = { IntOffset(-500, +500) },
+                animationSpec = tween(durationMillis = 1000)
+            ),
+            exit = slideOut(
+                targetOffset = { IntOffset(500, +500) },
+                animationSpec = tween(durationMillis = 1000)
+            )
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(200.dp)
+                    .background(Color.Blue)
+            )
+        }
+         */
     }
 }
 
