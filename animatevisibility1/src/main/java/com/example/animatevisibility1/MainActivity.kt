@@ -16,8 +16,11 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.CubicBezierEasing
+import androidx.compose.animation.core.FastOutLinearInEasing
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandHorizontally
@@ -221,6 +224,32 @@ fun MainScreen() {
             )
         }
          */
+
+//        /*
+        // FastOutSlowInEasing:     Быстрое начало(FastOut), плавное замедление(SlowIn)
+        // LinearOutSlowInEasing:   Подходит для анимаций,
+        //                          где важно быстро начать движение, но не резко заканчивать.
+        //                          Отличается от FastOutSlowInEasing более плавным стартом
+        // FastOutLinearInEasing:   Быстрый старт → далее равномерное движение → резковатое завершение.
+        // LinearEasing:            Равномерное движение объекта по прямой без разгона и торможения
+        // CubicBezierEasing:       Определяется изменением скорости по четырем точкам внутри кривой Безье
+        AnimatedVisibility(
+            visible = boxVisible,
+//            enter = slideInHorizontally(animationSpec = tween(durationMillis = 5000, easing = FastOutSlowInEasing)),
+//            enter = slideInHorizontally(animationSpec = tween(durationMillis = 5000, easing = LinearOutSlowInEasing)),
+//            enter = slideInHorizontally(animationSpec = tween(durationMillis = 5000, easing = FastOutLinearInEasing)),
+//            enter = slideInHorizontally(animationSpec = tween(durationMillis = 5000, easing = LinearEasing)),
+            enter = slideInHorizontally(animationSpec = tween(durationMillis = 5000,
+                easing = CubicBezierEasing(0f, 1f, 0.5f,1f))),
+            exit =  slideOutVertically()
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(200.dp)
+                    .background(Color.Blue)
+            )
+        }
+//         */
     }
 }
 
