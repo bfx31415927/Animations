@@ -4,7 +4,17 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.Spring.DampingRatioHighBouncy
+import androidx.compose.animation.core.Spring.DampingRatioLowBouncy
+import androidx.compose.animation.core.Spring.DampingRatioMediumBouncy
+import androidx.compose.animation.core.Spring.DampingRatioNoBouncy
+import androidx.compose.animation.core.Spring.StiffnessHigh
+import androidx.compose.animation.core.Spring.StiffnessMedium
+import androidx.compose.animation.core.Spring.StiffnessMediumLow
+import androidx.compose.animation.core.Spring.StiffnessVeryLow
 import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -63,7 +73,28 @@ fun MotionDemo() {
             BoxPosition.Start -> 0.dp
             BoxPosition.End -> screenWidth - boxSizeLength
         },
-        animationSpec = tween(durationMillis = 5000), label = "Motion"
+
+//      animationSpec = tween(durationMillis = 5000), label = "Motion"
+
+        //вместо обычного движения (закомментированная строка выше)
+        //добавляем эффект пружины:
+        //у spring() есть два параметра: dampingRatio и stiffness
+        //dampingRatio - это коэффициент затухания, который определяет,
+        //      насколько сильно объект отталкивается
+        //      DampingRatioHighBouncy:
+        //      DampingRatioLowBouncy:
+        //      DampingRatioMediumBouncy:
+        //      DampingRatioNoBouncy:
+        //stiffness - это коэффициент жесткости, который определяет,
+        //      насколько сильно объект притягивается к своему исходному положению
+        //      StiffnessHigh:
+        //      StiffnessLow:
+        //      StiffnessMedium:
+        //      StiffnessMediumLow:
+        //      StiffnessVeryLow:
+        animationSpec = spring(dampingRatio = DampingRatioHighBouncy,
+                                stiffness = StiffnessMediumLow), label = "Motion" //прикольный вариант (на мой взгляд)
+//                animationSpec = spring(), label = "Motion" //без эффекта пружины
     )
 
     Column(
@@ -93,7 +124,7 @@ fun MotionDemo() {
         }
     }
 }
-
+//Превью не показываает исинного поведения эффектов пружины
 @Preview(showBackground = true)
 @Composable
 fun GreetingPreview() {
