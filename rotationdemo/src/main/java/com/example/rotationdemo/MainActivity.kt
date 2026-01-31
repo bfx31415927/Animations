@@ -12,6 +12,7 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -57,9 +58,12 @@ fun RotationDemo() {
         animationSpec = tween(durationMillis = 3000/*, easing = LinearEasing*/), label = "Rotate"
     )
 
-    Column(horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.fillMaxWidth())
-    {
+    Column(
+        modifier = Modifier
+            .fillMaxSize(), // заполняем весь экран
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
         Image(
             painter = painterResource(R.drawable.propeller),
             contentDescription = "fan",
