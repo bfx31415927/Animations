@@ -22,3 +22,4 @@ dependencyResolutionManagement {
 rootProject.name = "Animations"
 include(":animatevisibility1")
 include(":animatevisibility2")
+include(":crossfading")
