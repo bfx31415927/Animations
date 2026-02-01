@@ -1,5 +1,17 @@
+/*
+    По поводу ключевых кадров(см. пример ниже):
+    поведение анимации можно дополнительно настроить
+    с помощью функции with, например:
+    animationSpec = keyframes {
+            durationMillis = 1000
+            0.dp.at(10).with(LinearEasing)
+            100.dp.at(500).with(FastOutSlowInEasing)
+            200.dp.at(700).with(LinearOutSlowInEasing)
+ */
 package com.example.motiondemo
 
+import android.app.Activity
+import android.content.pm.ActivityInfo
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -14,6 +26,7 @@ import androidx.compose.animation.core.Spring.StiffnessMedium
 import androidx.compose.animation.core.Spring.StiffnessMediumLow
 import androidx.compose.animation.core.Spring.StiffnessVeryLow
 import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.keyframes
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
@@ -46,6 +59,9 @@ import com.example.motiondemo.ui.theme.MotionDemoTheme
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+
         enableEdgeToEdge()
         setContent {
             MotionDemoTheme {
@@ -63,6 +79,7 @@ enum class BoxPosition {
 
 @Composable
 fun MotionDemo() {
+
     var boxState by remember { mutableStateOf(BoxPosition.Start) }
     val boxSizeLength = 70.dp
 
@@ -74,10 +91,15 @@ fun MotionDemo() {
             BoxPosition.End -> screenWidth - boxSizeLength
         },
 
-//      animationSpec = tween(durationMillis = 5000), label = "Motion"
+        /*
+        // 1. Обычное движение(по умолчанию: easing: Easing = FastOutSlowInEasing)
+      animationSpec = tween(durationMillis = 5000), label = "Motion"
+    )
 
-        //вместо обычного движения (закомментированная строка выше)
-        //добавляем эффект пружины:
+        */
+
+/*
+        // 2. Пружина
         //у spring() есть два параметра: dampingRatio и stiffness
         //dampingRatio - это коэффициент затухания, который определяет,
         //      насколько сильно объект отталкивается
@@ -92,10 +114,29 @@ fun MotionDemo() {
         //      StiffnessMedium:
         //      StiffnessMediumLow:
         //      StiffnessVeryLow:
+//        animationSpec = spring(), label = "Motion" //без эффекта пружины
         animationSpec = spring(dampingRatio = DampingRatioHighBouncy,
                                 stiffness = StiffnessMediumLow), label = "Motion" //прикольный вариант (на мой взгляд)
-//                animationSpec = spring(), label = "Motion" //без эффекта пружины
     )
+*/
+
+//    /*
+    // 3. Ключевые кадры
+        animationSpec = keyframes {
+            durationMillis = 1000
+            val x1 = screenWidth - boxSizeLength
+            if (boxState == BoxPosition.End) {
+                0.dp.at(10)
+                100.dp.at(500)
+                200.dp.at(700)
+            } else {
+                x1.at(10)
+                (x1 - 100.dp).at(500)
+                (x1 - 200.dp).at(700)
+            }
+        }
+    )
+//     */
 
     Column(
         modifier = Modifier.fillMaxWidth(), // заполняем весь экран
@@ -124,7 +165,8 @@ fun MotionDemo() {
         }
     }
 }
-//Превью не показываает исинного поведения эффектов пружины
+
+//Превью не показываает истинного поведения эффектов пружины
 @Preview(showBackground = true)
 @Composable
 fun GreetingPreview() {
